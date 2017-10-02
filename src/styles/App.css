@@ -18,6 +18,13 @@
   font-size: large;
 }
 
+.correct{
+  background-color: #47B88A;
+}
+.incorrect{
+  background-color: #F47456;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

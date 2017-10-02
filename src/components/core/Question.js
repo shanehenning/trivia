@@ -2,14 +2,13 @@ import React, {Component} from 'react';
 
 class Question extends Component{
   componentWillMount(){
-    console.log('this.props: ', this.props);
-    console.log('this.props.trivias: ', this.props.trivias);
+    console.log('question componentWillMount this.props: ', this.props);
   }
 
 render(){
   let allAnswers = this.props.trivias[this.props.questionNumber].allAnswers;
     return (
-      <div>
+      <div className="question">
         <h2>{this.props.trivias[this.props.questionNumber].question}</h2>
         <h3>Category: {this.props.trivias[this.props.questionNumber].category}</h3>
         <ol>
