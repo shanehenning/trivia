@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Question from './Question';
+import Button from './Button';
 
 class Core extends Component{
   constructor(props){
@@ -10,7 +11,7 @@ class Core extends Component{
     };
   }
 
-  componentWillMount(){
+  componentDidMount(){
     console.log('componentWillMount this.state: ', this.state);
     return fetch('https://opentdb.com/api.php?amount=10&difficulty=easy')
     .then((response) => response.json())
@@ -26,13 +27,18 @@ class Core extends Component{
     });
   }
 
-  handleClick(e){
+  handleClick = (e) => {
     let guess = e.currentTarget;
-    if (guess.textContent === (this.props.trivias[this.props.questionNumber].correct_answer)) {
+    if (guess.textContent === (this.state.trivias[this.state.questionNumber].correct_answer)) {
         guess.style.backgroundColor = '#47B88A';
     } else{
       guess.style.backgroundColor = '#F47456';
     }
+  }
+
+  handleNextQuestion = () => {
+    if(this.state.questionNumber > 9 ) return;
+    this.setState({questionNumber: this.state.questionNumber + 1});
   }
 
   render(){
@@ -40,11 +46,16 @@ class Core extends Component{
       return <h1>...</h1>;
     }
     return (
+      <div>
       <Question
         trivias={this.state.trivias}
         questionNumber={this.state.questionNumber}
         onQuestionClick={this.handleClick}
       />
+      <Button
+        onButtonClick={this.handleNextQuestion}
+        buttonText={"Next Question"} />
+    </div>
     );
   }
 }
