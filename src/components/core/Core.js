@@ -8,21 +8,34 @@ class Core extends Component{
     this.state = {
       trivias: [],
       questionNumber: 0,
+      requestFailed: false,
     };
   }
 
   componentDidMount(){
     console.log('componentWillMount this.state: ', this.state);
     return fetch('https://opentdb.com/api.php?amount=10&difficulty=easy')
-    .then((response) => response.json())
+    .then((response) => {
+      console.log('response: ', response);
+      if(!response.ok){
+        this.setState({
+          requestFailed: true
+        });
+        throw Error('Api request failed');
+      }
+      return response.json();
+    })
     .then((responseJson) =>{
+      console.log('responseJson: ', responseJson);
       responseJson.results.forEach(function(item){
-        if(item.type === 'boolean') return;
+        if(item.type === 'boolean') {
+          item.allAnswers = [true, false];
+        }
         item.allAnswers = item.incorrect_answers;
         item.allAnswers.splice(Math.floor(Math.random() * (item.incorrect_answers.length + 1)), 0, item.correct_answer);
       });
       this.setState({trivias: responseJson.results});
-    }).catch((error) =>{
+    }).catch((error) => {
       console.error(error);
     });
   }
@@ -37,13 +50,16 @@ class Core extends Component{
   }
 
   handleNextQuestion = () => {
-    if(this.state.questionNumber > 9 ) return;
+    if(this.state.questionNumber >= 9 ) return;
     this.setState({questionNumber: this.state.questionNumber + 1});
   }
 
   render(){
     if(!this.state.trivias[0]){
       return <h1>...</h1>;
+    }
+    if(this.state.requestFailed === true){
+      return <h1>Request Failed</h1>;
     }
     return (
       <div>
