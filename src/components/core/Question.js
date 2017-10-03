@@ -6,16 +6,16 @@ class Question extends Component{
   }
 
 render(){
-  let allAnswers = this.props.trivias[this.props.questionNumber].allAnswers;
     return (
       <div className="question">
-        <h2>{this.props.trivias[this.props.questionNumber].question}</h2>
-        <h3>Category: {this.props.trivias[this.props.questionNumber].category}</h3>
+        <h2>{this.props.question}</h2>
+        <h3>Category: {this.props.category}</h3>
         <ol>
-          {allAnswers.map((answer, i) =>
+          {this.props.allAnswers.map((answer, i) =>
             <li key={i}
-              onClick={this.props.onQuestionClick.bind(this)}
-              value={this.props.answer}
+              onClick={this.props.onQuestionClick}
+              className={this.props.questionClassName[i]}
+              value={i}
               >
             {answer}
           </li>)}

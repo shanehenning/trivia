@@ -18,6 +18,9 @@
   font-size: large;
 }
 
+.possible-answer{
+  background-color: transparent;
+}
 .correct{
   background-color: #47B88A;
 }
