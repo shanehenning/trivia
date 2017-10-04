@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
 
 class NewQuestionTimer extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      amount: 6000
-    }
-  }
-  countdown = () => {
-    setInterval(function(){
-      this.setState({amount: (this.state.amount - 1000)});
+  componentDidMount () {
+    let amount = this.props.timeUntil;
+    var i = setInterval(function(){
+      console.log(amount);
+      amount = amount - 1000;
+      if(amount < 0) {
+        clearInterval(i);
+      }
     }, 1000);
   }
 
@@ -17,7 +16,7 @@ class NewQuestionTimer extends Component{
     return (
       <div>
         <h6>
-          New Question in {this.countdown}
+          {/* New Question in {amount} */}
         </h6>
       </div>
     );

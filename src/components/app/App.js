@@ -28,6 +28,7 @@ class App extends Component{
       questionClassName: [],
       correctGuess: false,
       scoreCorrect: 0,
+      seconds: 0,
       requestFailed: false,
       gameOver: false,
       questionAmount: 10,
@@ -35,6 +36,7 @@ class App extends Component{
       selectedDifficulty: 0,
       selectedQuestionType: 0,
     };
+    this.timer = 0;
   }
 
   fetchTrivia = (questionAmount, selectedCategory, selectedDifficulty, selectedQuestionType) => {
@@ -123,11 +125,23 @@ class App extends Component{
           });
           setTimeout(() => {
             this.handleNextQuestion();
-          }, 1500);
+          }, 3000);
+          this.startCountdown();
       } else{
         questionClassNameArray.splice((guess.value - 1), 1, 'incorrect');
         this.setState({questionClassName: questionClassNameArray});
       }
+  }
+
+  startCountdown = () => {
+    this.setState({seconds: 3});
+    this.timer = setInterval(this.countdownTimer, 1000);
+  }
+  countdownTimer = () => {
+    this.setState({seconds: (this.state.seconds - 1)});
+    if(this.state.seconds === 0){
+      clearInterval(this.timer);
+    }
   }
 
   handleNextQuestion = () => {
@@ -212,6 +226,10 @@ class App extends Component{
     return (
       <div>
         <Button
+          buttonText={"Start Over"}
+          onButtonClick={this.restart}
+        />
+        <Button
           onButtonClick={this.handleNextQuestion}
           buttonText={"Skip Question"}
         />
@@ -225,6 +243,12 @@ class App extends Component{
         allAnswers={this.state.trivias[this.state.questionNumber].allAnswers}
         questionClassName={this.state.questionClassName}
       />
+      {this.state.correctGuess ?
+        <div>
+          <h6>Next question in {this.state.seconds}</h6>
+        </div>
+        : null
+      }
     </div>
     );
   }
