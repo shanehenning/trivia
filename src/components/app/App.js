@@ -191,17 +191,11 @@ class App extends Component{
         />
       );
     }
-    // if(this.state.correctGuess === true){
-    //   return (
-    //     <NewQuestionTimer
-    //
-    //     />
-    //   );
-    // }
     if(this.state.welcome === true){
       return (
         <div>
-          <h1>{this.props.textWelcome}</h1>
+          <h1>Welcome to Ugly Trivia!</h1>
+          <h2>Below are options to customize your trivial experience.</h2>
           <Intro
             handleSubmit={this.handleStart}
             handleInputChange={this.handleInputChange}
