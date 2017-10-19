@@ -12,6 +12,7 @@ class Intro extends Component{
             type={this.props.formInputType}
             value={this.props.questionAmount}
             onChange={this.props.handleInputChange}
+            max={this.props.inputMax}
           />
         </label>
 
@@ -35,7 +36,7 @@ class Intro extends Component{
           </select>
         </label>
 
-        <label>
+        {/* <label>
           {this.props.labelDifficulty}
           <select
             name={this.props.nameDifficulty}
@@ -49,7 +50,7 @@ class Intro extends Component{
               </option>
             )}
           </select>
-        </label>
+        </label> */}
 
         <br />
         <p>Ready?</p>

@@ -14,6 +14,20 @@ function decodeData(content){
   return area.value;
 }
 
+function filterUnique(list){
+  let seen = {};
+  return list.filter(function(item){
+    return seen.hasOwnProperty(item) ? false : seen[item] = true;
+  });
+}
+
+var allQuestions = {};
+function filterAllQuestions(oldStuff, newStuff){
+  return newStuff.filter(function(item){
+  return oldStuff.hasOwnProperty(item.question) ? oldStuff[item] : oldStuff[item.question] = item;
+  });
+}
+
 class App extends Component{
   constructor(props){
     super(props);
@@ -35,8 +49,11 @@ class App extends Component{
       selectedCategory: 0,
       selectedDifficulty: 0,
       selectedQuestionType: 0,
+
+      qriusityCategories: [],
     };
     this.timer = 0;
+    this.allData = [];
   }
 
   fetchTrivia = (questionAmount, selectedCategory, selectedDifficulty, selectedQuestionType) => {
@@ -59,6 +76,7 @@ class App extends Component{
       return response.json();
     })
     .then((responseJson) =>{
+      console.log('responseJson: ', responseJson);
       // <-- parsing out html special characters
       responseJson.results.forEach(function(result){
         result.question = decodeData(result.question);
@@ -79,9 +97,66 @@ class App extends Component{
       this.setState({trivias: responseJson.results});
       this.setState({questionClassName: new Array(this.state.trivias[this.state.questionNumber].allAnswers.length).fill('default')});
       console.log('fetchTrivia this.state: ', this.state);
+      filterAllQuestions(allQuestions, this.state.trivias);
+      console.log('allQuestions: ', allQuestions);
     }).catch((error) => {
       console.error(error);
     });
+  }
+
+//   promiseCity = () => {
+//     let url;
+//     let i = 1;
+//     url = 'https://qriusity.com/v1/categories?page=' + i + '&limit=50';
+// }
+
+// promiseIteration = (apiUrl) => {
+//   fetch(apiUrl)
+//   .then((response) => {
+//     console.log('response: ', response);
+//     return response.json();
+//   })
+//   .then((responseJson) => {
+//     this.allData.push(responseJson);
+//     console.log('this.allData: ', this.allData);
+//     if(responseJson.length < 20) return;
+//   });
+// }
+
+componentWillMount(){
+  console.log('componentWillMount allQuestions: ', allQuestions);
+}
+
+  fetchTriviaCategories = () => {
+    Promise.all([
+      fetch('https://qriusity.com/v1/categories?page=1&limit=20')
+      .then((response) => {
+        return response.json();
+      }),
+       fetch('https://qriusity.com/v1/categories?page=2&limit=20')
+      .then((response) => {
+        return response.json();
+      })
+    ])
+
+    .then((categories) => {
+      let qriusityCategories = [];
+      categories = categories[0].concat(categories[1]);
+      categories.forEach(function(item){
+        qriusityCategories.push(item.name);
+      });
+      let qriusity = filterUnique(qriusityCategories).sort(function(a,b){
+        if(a < b) return -1;
+        if(a > b) return 1;
+        return 0;
+      });
+      this.setState({qriusityCategories: qriusity});
+    });
+  }
+
+  fetchQriusityTrivia = (questionAmount, selectedCategory) => {
+    let baseUrl = 'https://qriusity.com/v1';
+
   }
 
   handleInputChange = (e) => {
@@ -194,13 +269,14 @@ class App extends Component{
     if(this.state.welcome === true){
       return (
         <div>
-          <h1>Welcome to Ugly Trivia!</h1>
-          <h2>Below are options to customize your trivial experience.</h2>
+          {/* <h1>Welcome to Ugly Trivia!</h1> */}
+          {/* <h2>Below are options to customize your trivial experience.</h2> */}
           <Intro
             handleSubmit={this.handleStart}
             handleInputChange={this.handleInputChange}
             labelFormInput={"How many questions?"}
             formInputType={"number"}
+            inputMax={20}
             nameFormInput={"questionAmount"}
             questionAmount={this.state.questionAmount}
             labelCategory={"Select a category"}
